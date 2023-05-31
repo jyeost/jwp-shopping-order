@@ -1,13 +1,13 @@
 package cart.dao;
 
 import cart.domain.Member;
+import cart.domain.Point;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -20,13 +20,19 @@ public class MemberDao {
     }
 
     public Member getMemberById(Long id) {
-        String sql = "SELECT * FROM member WHERE id = ?";
+        String sql = "SELECT * FROM MEMBER " +
+                " left join point " +
+                " on point.member_id = MEMBER.id " +
+                " WHERE member.id = ?";
         List<Member> members = jdbcTemplate.query(sql, new Object[]{id}, new MemberRowMapper());
         return members.isEmpty() ? null : members.get(0);
     }
 
     public Member getMemberByEmail(String email) {
-        String sql = "SELECT * FROM member WHERE email = ?";
+        String sql = "SELECT * FROM MEMBER " +
+                " left join point " +
+                " on point.member_id = MEMBER.id " +
+                " WHERE member.email = ?";
         List<Member> members = jdbcTemplate.query(sql, new Object[]{email}, new MemberRowMapper());
         return members.isEmpty() ? null : members.get(0);
     }
@@ -54,7 +60,8 @@ public class MemberDao {
     private static class MemberRowMapper implements RowMapper<Member> {
         @Override
         public Member mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return new Member(rs.getLong("id"), rs.getString("email"), rs.getString("password"));
+            Point point = new Point(rs.getInt("point"));
+            return new Member(rs.getLong("id"), rs.getString("email"), rs.getString("password"), point);
         }
     }
 }

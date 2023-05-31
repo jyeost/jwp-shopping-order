@@ -2,12 +2,12 @@ package cart.domain;
 
 public class Product {
     private Long id;
-    private String name;
-    private int price;
-    private int sale;
-    private String imageUrl;
+    private final String name;
+    private final int price;
+    private final int sale;
+    private final String imageUrl;
 
-    public Product(String name, int price, int sale,String imageUrl) {
+    public Product(String name, int price, int sale, String imageUrl) {
         this.name = name;
         this.price = price;
         this.sale = sale;
@@ -40,5 +40,9 @@ public class Product {
 
     public String getImageUrl() {
         return imageUrl;
+    }
+
+    public int getSalePrice() {
+        return price * (100 - sale) / 100;
     }
 }
